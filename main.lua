@@ -6,7 +6,7 @@ local detectedAdmins = {}
 local Decimals = 4
 local Clock = os.clock()
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/lib-main.lua"))({
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4ed5f/spec/refs/heads/main/lib-main"))({
     cheatname = "Specter.vip",
     gamename = "Project Delta",
 })
@@ -58,7 +58,7 @@ end)
 
 if libraryxxt == false then
     library:SendNotification(("DL-F"), 0.6)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/drawing.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4ed5f/spec/refs/heads/main/lib-drawing"))()
     library:SendNotification(("DL-T"), 0.3)
 end
 
