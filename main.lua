@@ -6,7 +6,7 @@ local detectedAdmins = {}
 local Decimals = 4
 local Clock = os.clock()
 
-local library = loadstring(game:HttpGet("https://pastebin.com/raw/7YqGgWay"))({
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/lib-main.lua"))({
     cheatname = "Specter.vip",
     gamename = "Project Delta",
 })
