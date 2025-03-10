@@ -59,7 +59,6 @@ end
 local function tdf()
     local success, result = pcall(function() delfile("specterguard.lua") end)
     if success then
-        wait(0.5)
         return true
     end
     return false
