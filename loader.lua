@@ -27,22 +27,81 @@ else
 end
 ]]
 
-print("-----------------------------------------")
-print("||            Specter - Normal         ||")
-print("-----------------------------------------")
-print("||        Specter Version: 0.1         ||")
-print("-----------------------------------------")
+if not getgenv().aqwssedfrgtyhuj then
+    getgenv().aqwssedfrgtyhuj = 0
+end
 
-print("hwid_valid: true")
+getgenv().aqwssedfrgtyhuj = getgenv().aqwssedfrgtyhuj + 2
 
-print("key_valid: true")
-print("Loading script")
-print("-----------------------------------------")
-loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/main.lua"))()
+if getgenv().aqwssedfrgtyhuj > 2 then
+    game.Players.LocalPlayer:Kick("Tampering detected.")
+    return
+end
+
+local function twf()
+    local success, result = pcall(function() writefile("specterguard.lua", "print(\"load\")") end)
+    return success
+end
+
+local function tlf()
+    local success, result = pcall(function()
+        local func, err = loadfile("specterguard.lua")
+        if func then
+            local output = func()
+            return output == "load"
+        else
+            return false
+        end
+    end)
+    return success
+end
+
+local function tdf()
+    local success, result = pcall(function() delfile("specterguard.lua") end)
+    if success then
+        wait(0.5)
+        return true
+    end
+    return false
+end
+
+local isValid = twf() and tlf() and tdf()
+
+if not isValid then
+    game.Players.LocalPlayer:Kick("Tampering detected.")
+    return
+end
+
+local folderName = "Specter.vip"
+local assetsFolder = folderName .. "/assets"
+local fileName = assetsFolder .. "/gradientp180.oh"
+
+if not isfolder(folderName) then
+    makefolder(folderName)
+end
+
+if not isfolder(assetsFolder) then
+    makefolder(assetsFolder)
+end
+
+local url = "https://raw.githubusercontent.com/t5281/spc/refs/heads/main/main.lua"
+local scriptContent = game:HttpGet(url)
+
+writefile(fileName, scriptContent)
+
+task.spawn(function()
+    local success, result = pcall(loadfile(fileName))
+    if success then
+        delfile(fileName)
+    else
+        delfile(fileName)
+    end
+end)
+
+delfile(fileName)
 
 local elapsedTime = os.clock() - startTime
-print("[DEBUG] Script load time: " .. string.format("%.6f", elapsedTime) .. "sec")
-print("Specter.vip has loaded!")
+print("Specter.vip has loaded in " .. string.format("%.6f", elapsedTime) .. "s!")
 
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
