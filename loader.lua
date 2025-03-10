@@ -38,7 +38,7 @@ print("hwid_valid: true")
 print("key_valid: true")
 print("Loading script")
 print("-----------------------------------------")
-loadstring(game:HttpGet("https://pastebin.com/raw/WPZ6X3cV"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/main.lua"))()
 
 local elapsedTime = os.clock() - startTime
 print("[DEBUG] Script load time: " .. string.format("%.6f", elapsedTime) .. "sec")
