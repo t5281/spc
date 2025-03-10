@@ -58,7 +58,7 @@ end)
 
 if libraryxxt == false then
     library:SendNotification(("DL-F"), 0.6)
-    loadstring(game:HttpGet("https://pastebin.com/raw/LUjuitCP"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/t5281/spc/refs/heads/main/drawing.lua"))()
     library:SendNotification(("DL-T"), 0.3)
 end
 
