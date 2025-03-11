@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.1"
+local version = "v0.2"
 
 local detectedAdmins = {}
 
@@ -14,7 +14,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 _G.Loading = true
 library:init()
 
-local allowed_keys = { "234567189" }
+local allowed_keys = { "fnaxl0" }
 
 local function is_key_allowed(script_key)
     for _, key in ipairs(allowed_keys) do
@@ -69,9 +69,11 @@ else
     library:SendNotification(("Loading Assets " .. version .. " - " .. exec), 4)
     print("[[ Specter.vip || " .. exec .." || " .. version .. " ]]")
 end
+--[[
 if exec == "Seliware" or exec == "Nihon" then
     library:SendNotification((exec .. " is semi-supported, script might cause errors."), 3.5)
 end
+]]
 if _G.exothiumxyz then
     library:SendNotification(("Script is already loaded, therefore you cant execute it again"), 3.5)
     return
@@ -116,6 +118,7 @@ local aimvischeck = false
 local aimdistcheck = false
 local aimbang = true
 local aimtrigger = false
+local hillwallbang = false
 local aiminfrange = false
 local aimtarget = nil
 local aimtargetpart = nil
@@ -816,6 +819,36 @@ aim:AddToggle({
     end
 })
 
+resolver:AddToggle({
+    text = "Underground Resolver",
+    flag = "UndergroundResolver",
+    tooltip = "Forces your character lower than the ground level and automatically fires, use with wall check and do not use Auto Shoot.",
+    risky = true,
+    callback = function(v)
+        hillwallbang = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Underground Resolver",
+    mode = "toggle",
+    bind = "None",
+    flag = "UndergroundResolverBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        hillwallbang = v
+    end,
+    keycallback = function(v)
+
+    end
+})
+
+resolver:AddSeparator({
+    enabled = true,
+    text = ""
+})
 --[[
 aim:AddToggle({
     text = "Animation Resolver",
@@ -5534,14 +5567,14 @@ end)
 local dysenc = {}
 
 local fpsrequired = require(game.ReplicatedStorage.Modules.FPS)
-runs.Heartbeat:Connect(function(delta) -- fast cycle
+runs.Heartbeat:Connect(function(delta) 
     if not localplayer.Character or not localplayer.Character:FindFirstChild("HumanoidRootPart") or not localplayer.Character:FindFirstChild("Humanoid") then
         return
     end
 
-    choosetarget() --aim part
+    choosetarget()
 
-    if aimtrigger and aimtarget ~= nil then --trigger bot
+    if hillwallbang and aimtarget ~= nil then
         fpsrequired.action(a1table, true)
         wait()
         fpsrequired.action(a1table, false)
@@ -5582,6 +5615,16 @@ runs.RenderStepped:Connect(function(delta) --  fast
 
     if charsemifly == false and localplayer.Character.Humanoid.PlatformStand == true then
         localplayer.Character.Humanoid.PlatformStand = false
+    end
+
+    if aimtrigger and aimtarget ~= nil then
+        if not uis.MouseIconEnabled then
+            task.spawn(function()
+                mouse1press()
+                wait()
+                mouse1release()
+            end)
+        end
     end
 
     if charsemifly and charantiaim_underground then
