@@ -451,7 +451,7 @@ local gunmods = combat:AddSection("Gun Manipulation", 2)
 local tarinfo = combat:AddSection("Target Info", 2)
 local resolver = combat:AddSection("Resolver", 2)
 
-local semifly = playerstab:AddSection("Character Modifier", 1)
+local semifly = playerstab:AddSection("Character Mods", 1)
 local privatefeatures = playerstab:AddSection("Player Exploits", 2)
 
 local wh = visualstab:AddSection("Extra-Sensory Perception", 1)
@@ -1418,10 +1418,10 @@ local function movementtoggle(v)
 end
 
 semifly:AddToggle({
-    text = "Movement Toggle",
+    text = "Semi Fly",
     state = false,
     risky = true,
-    flag = "MovementToggle",
+    flag = "SemiFly",
     callback = function(v)
         if _G.LoadingConfig == true then return end; if _G.Loading == true then return end
         movementtoggle(v)
