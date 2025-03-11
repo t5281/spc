@@ -14,7 +14,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 _G.Loading = true
 library:init()
 
-local allowed_keys = { "fnaxl0" }
+local allowed_keys = { "234567189" }
 
 local function is_key_allowed(script_key)
     for _, key in ipairs(allowed_keys) do
@@ -185,8 +185,7 @@ esptextsize = 17
 espfillcolor = Color3.fromRGB(159, 99, 254)
 esplinecolor = Color3.fromRGB(159, 99, 254)
 
-silentaimbind = Enum.KeyCode.H
-autoshootbind = Enum.KeyCode.K
+local a1table
 
 inventoryCheckerToggle = false
 inventorygradient1 = Color3.fromRGB(159, 99, 254)
@@ -5534,12 +5533,19 @@ end)
 
 local dysenc = {}
 
+local fpsrequired = require(game.ReplicatedStorage.Modules.FPS)
 runs.Heartbeat:Connect(function(delta) -- fast cycle
     if not localplayer.Character or not localplayer.Character:FindFirstChild("HumanoidRootPart") or not localplayer.Character:FindFirstChild("Humanoid") then
         return
     end
 
     choosetarget() --aim part
+
+    if aimtrigger and aimtarget ~= nil then --trigger bot
+        fpsrequired.action(a1table, true)
+        wait()
+        fpsrequired.action(a1table, false)
+    end
 
     if upangletoggle then
         game:GetService("ReplicatedStorage").Remotes.UpdateTilt:FireServer(upangleY)
@@ -5751,16 +5757,6 @@ end
         aimfovcircle.Radius = aimfov * (90 / wcamera.FieldOfView )
     else
         aimfovcircle.Radius = aimfov
-    end
-
-    if aimtrigger and aimtarget ~= nil then
-        if not uis.MouseIconEnabled then
-            task.spawn(function()
-                mouse1press()
-                wait()
-                mouse1release()
-            end)
-        end
     end
 
     if snaplinebool and aimtargetpart then
