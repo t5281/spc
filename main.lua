@@ -458,13 +458,13 @@ local wh = visualstab:AddSection("Extra-Sensory Perception", 1)
 local viewmod = visualstab:AddSection("Viewmodel", 1)
 
 local effects = visualstab:AddSection("Effects", 2)
-
 local cross = visualstab:AddSection("Crosshair", 2)
 local worldh = visualstab:AddSection("World", 2)
+local characterchams = visualstab:AddSection("Character Chams", 2)
 
 local inventorychecker = other:AddSection("Hotbar Checker", 1)
 local modchecker = other:AddSection("Staff Related", 1)
-local characterchams = other:AddSection("Character Chams", 1)
+
 local camzoom = other:AddSection("Zoom", 2)
 local camer = other:AddSection("Effects", 2)
 local hitsounds = other:AddSection("Hitsounds", 2)
