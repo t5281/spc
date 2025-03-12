@@ -27,6 +27,10 @@ else
 end
 ]]
 
+local function ca()
+    while true do end
+end
+
 if not getgenv().aqwssedfrgtyhuj then
     getgenv().aqwssedfrgtyhuj = 0
 end
@@ -34,6 +38,7 @@ end
 getgenv().aqwssedfrgtyhuj = getgenv().aqwssedfrgtyhuj + 2
 
 if getgenv().aqwssedfrgtyhuj > 2 then
+    ca()
     game.Players.LocalPlayer:Kick("Tampering detected.")
     return
 end
@@ -68,6 +73,7 @@ local isValid = twf() and tlf() and tdf()
 
 if not isValid then
     game.Players.LocalPlayer:Kick("Tampering detected.")
+    ca()
     return
 end
 
