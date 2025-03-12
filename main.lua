@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.2"
+local version = "v0.3"
 
 local detectedAdmins = {}
 
@@ -819,6 +819,7 @@ aim:AddToggle({
     end
 })
 
+if privatevar then
 resolver:AddToggle({
     text = "Underground Resolver",
     flag = "UndergroundResolver",
@@ -849,6 +850,7 @@ resolver:AddSeparator({
     enabled = true,
     text = ""
 })
+end
 --[[
 aim:AddToggle({
     text = "Animation Resolver",
