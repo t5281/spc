@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.3"
+local version = "v0.4"
 
 local detectedAdmins = {}
 
@@ -13,8 +13,8 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 
 _G.Loading = true
 library:init()
-
-local allowed_keys = { "lDZutGiZoGCyrUPYnmXYLJlFDsZuxyDq", "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS" }
+script_key = "1"
+local allowed_keys = { "1", "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS" }
 
 local function is_key_allowed(script_key)
     for _, key in ipairs(allowed_keys) do
@@ -62,7 +62,7 @@ if libraryxxt == false then
     library:SendNotification(("DL-T"), 0.3)
 end
 
-if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil and string.match(exec, "Seliware") == nil  and string.match(exec, "Nihon") == nil and string.match(exec, "AWP") == nil and string.match(exec, "Swift") == nil and string.match(exec, "Velocity") == nil and string.match(exec, "SirHurt") == nil and string.match(exec, "Atlantis") == nil then
+if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil and string.match(exec, "Seliware") == nil  and string.match(exec, "Nihon") == nil and string.match(exec, "AWP") == nil and string.match(exec, "Swift") == nil and string.match(exec, "Velocity") == nil and string.match(exec, "SirHurt") == nil then
     library:SendNotification((exec .. "is not supported"), 10)
     return
 else
@@ -189,6 +189,10 @@ espfillcolor = Color3.fromRGB(159, 99, 254)
 esplinecolor = Color3.fromRGB(159, 99, 254)
 
 local a1table
+
+joinlogs = false
+leavelogs = false
+logduration = 4
 
 inventoryCheckerToggle = false
 inventorygradient1 = Color3.fromRGB(159, 99, 254)
@@ -464,6 +468,7 @@ local characterchams = visualstab:AddSection("Character Chams", 2)
 
 local inventorychecker = other:AddSection("Hotbar Checker", 1)
 local modchecker = other:AddSection("Staff Related", 1)
+local playerlogs = other:AddSection("Player Logs", 1)
 
 local camzoom = other:AddSection("Zoom", 2)
 local camer = other:AddSection("Effects", 2)
@@ -3709,6 +3714,41 @@ modchecker:AddSlider({
     end
 }):SetValue(3)
 
+playerlogs:AddToggle({
+    text = "Join Logs",
+    tooltip = "Enables/Disables notifications on player joined event.",
+    flag = "JoinLogs",
+    callback = function(v)
+        joinlogs = v
+    end
+})
+
+playerlogs:AddToggle({
+    text = "Leave Logs",
+    tooltip = "Enables/Disables notifications on player removing event.",
+    flag = "LeaveLogs",
+    callback = function(v)
+        leavelogs = v
+    end
+})
+
+playerlogs:AddSlider({
+    enabled = true,
+    text = "Notification Duration",
+    tooltip = "Changes the duration of the join/leave log notification.",
+    flag = "PlayerLogDuration",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0.5,
+    max = 10,
+    increment = 0.5,
+    risky = false,
+    callback = function(v)
+        logduration = v
+    end
+}):SetValue(4)
+
 --tracers--
 
 local function runtracer(start, endp)
@@ -4358,6 +4398,23 @@ do
         return arg1, arg2, arg3
     end
 end
+
+-- leave/join logs
+task.spawn(function()
+
+    Players.PlayerAdded:Connect(function(player)
+        if joinlogs then
+            library:SendNotification((player.Name .." has joined the server"), logduration)
+        end
+    end)
+
+    Players.PlayerRemoving:Connect(function(player)
+        if leavelogs then
+            library:SendNotification((player.Name .." has left the server"), logduration)
+        end
+    end)
+
+end)
 
 -- camera offset
 require(game.Players.LocalPlayer.PlayerScripts.PlayerModule.CameraModule.TransparencyController).Update = function(a1, a2) -- transparency = camthirdp and 1 or 0
