@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.6"
+local version = "v0.7"
 
 local detectedAdmins = {}
 
@@ -13,7 +13,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 
 _G.Loading = true
 library:init()
-script_key="A-2345634563245643456789"
+
 local allowed_keys = {
     "A-2345634563245643456789",
     "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY",
@@ -1213,7 +1213,7 @@ gunmods:AddToggle({
     end
 })
 
-gunmods:AddToggle({
+--[[gunmods:AddToggle({
     text = "Instant Reload",
     flag = "InstantReload",
     callback = function(v)
@@ -1223,7 +1223,7 @@ gunmods:AddToggle({
         require(game.ReplicatedStorage.Modules.FPS).reload = instrelOGfunc
     end
     end
-})
+})]]
 
 local originalValues = {}
 
@@ -1778,71 +1778,6 @@ semifly:AddSlider({
     increment = 0.1,
     callback = function(v)
         zspeedspin = v
-    end
-})
-
-semifly:AddSeparator({
-    enabled = true,
-    text = "Anti Aim Full Underground"
-})
-
-semifly:AddToggle({
-    text = "Full Underground",
-    flag = "FullUnderground",
-    tooltip = "Full Underground Anti Aim",
-    risky = true,
-    callback = function(v)
-
-    end
-}):AddBind({
-    enabled = true,
-    text = "Full Underground",
-    tooltip = "Full Underground Keybind",
-    mode = "toggle",
-    bind = "None",
-    flag = "FullUndergroundBind",
-    state = false,
-    nomouse = false,
-    noindicator = false,
-    callback = function(v)
-
-    task.spawn(function()
-        if v then
-            local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-            local humanoid = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid")
-            
-            if humanoid then
-                local animator = humanoid:FindFirstChild("Animator") or humanoid:WaitForChild("Animator")
-                if animator then
-                    FullUnderToggle = true
-                    danceTrack = animator:LoadAnimation(animatioffn)
-                    danceTrack.Looped = false
-                    danceTrack:Play(.1, 1, 0)
-                end
-            end
-        else
-            FullUnderToggle = false
-            if danceTrack then
-                danceTrack:Stop()
-                danceTrack:Destroy()
-            end
-        end
-    end)
-
-    camthirdp = v
-    if v and localplayer.Character then
-        localplayer.Character.Humanoid.CameraOffset = Vector3.new(camthirdpX, camthirdpY, camthirdpZ)
-        localplayer.CameraMaxZoomDistance = 0.5
-        localplayer.CameraMinZoomDistance = 0.5
-    else
-        localplayer.Character.Humanoid.CameraOffset = Vector3.new(0,0,0)
-        localplayer.CameraMaxZoomDistance = 0.5
-        localplayer.CameraMinZoomDistance = 0.5
-    end
-
-    end,
-    keycallback = function(v)
-        keybindgf = v
     end
 })
 
@@ -4280,7 +4215,7 @@ local function runhitmark(v140)
     end
 end
 
-aimmodfunc = function(prikol, p49, p50, p_u_51, v88, prikol1, p52, p53, p54, p55)-- prikol, p49, p50, p_u_51, _, p52, p53, p54, p55 \\\\\\\\\\\ _, v85, v86, v87, v88, _, v90, v91, v92
+aimmodfunc = function(prikol, p49, p50, p_u_51, v88, prikol1, p52, p53, p54, p55)
     local v_u_6 = game.ReplicatedStorage.Remotes.VisualProjectile
     local v_u_108 = 1
     local v_u_106 = 0
@@ -4331,14 +4266,14 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, v88, prikol1, p52, p53, p54, p55
         local v81 = 10000
         if v61.Tool:GetAttribute("MuzzleDevice") or "Default" == "Suppressor" then
             if tick() - p53 < 0.8 then
-                v_u_4:PlaySoundV2(v60.FireSoundSupressed, v60.FireSoundSupressed.TimeLength, v_u_17)
+                v_u_4:PlaySoundV2(v60.Sounds.FireSoundSupressed, v60.Sounds.FireSoundSupressed.TimeLength, v_u_17)
             else
-                v_u_4:PlaySoundV2(v60.FireSoundSupressed, v60.FireSoundSupressed.TimeLength, v_u_17)
+                v_u_4:PlaySoundV2(v60.Sounds.FireSoundSupressed, v60.Sounds.FireSoundSupressed.TimeLength, v_u_17)
             end
         elseif tick() - p53 < 0.8 then
-            v_u_4:PlaySoundV2(v60.FireSound, v60.FireSound.TimeLength, v_u_17)
+            v_u_4:PlaySoundV2(v60.Sounds.FireSound, v60.Sounds.FireSound.TimeLength, v_u_17)
         else
-            v_u_4:PlaySoundV2(v60.FireSound, v60.FireSound.TimeLength, v_u_17)
+            v_u_4:PlaySoundV2(v60.Sounds.FireSound, v60.Sounds.FireSound.TimeLength, v_u_17)
         end
         local v_u_59
         if p_u_51.Item.Attachments:FindFirstChild("Front") then
@@ -5832,26 +5767,6 @@ runs.Heartbeat:Connect(function(delta)
     if upangletoggle then
         game:GetService("ReplicatedStorage").Remotes.UpdateTilt:FireServer(upangleY)
     end
-
-if FullUnderToggle and localplayer.Character and localplayer.Character:FindFirstChild("Humanoid") then
-    danceTrack.TimePosition = animpos
-    dysenc[1] = localplayer.Character.HumanoidRootPart.CFrame
-    dysenc[2] = localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity
-
-    local sjeifsfije = localplayer.Character.HumanoidRootPart.CFrame
-    sjeifsfije = sjeifsfije + Vector3.new(0, underground, 0)
-
-    local newRotation = CFrame.Angles(math.rad(undergroundcharrotX), 0, math.rad(undergroundcharrotZ))
-
-    localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(sjeifsfije.Position) * newRotation
-
-    runs.RenderStepped:Wait()
-
-    if localplayer.Character and localplayer.Character.HumanoidRootPart then
-        localplayer.Character.HumanoidRootPart.CFrame = dysenc[1]
-        localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity = dysenc[2]
-    end
-end
 
 if Desync and localplayer.Character and localplayer.Character:FindFirstChild("Humanoid") then
     playerdesync[1] = localplayer.Character.HumanoidRootPart.CFrame
