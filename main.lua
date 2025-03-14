@@ -3,8 +3,8 @@ local version = "v0.5"
 
 local detectedAdmins = {}
 
-local Decimals = 4
-local Clock = os.clock()
+Decimals = 4
+Clock = os.clock()
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4ed5f/spec/refs/heads/main/lib-main"))({
     cheatname = "Specter.vip",
@@ -146,10 +146,10 @@ peekkillheight = 30
 timeout = 0.3
 
 local aimFRIENDLIST = {}
-local friendlistmode = "Blacklist"
-local friendlistbots = false
+friendlistmode = "Blacklist"
+friendlistbots = false
 
-local esptextcolor = Color3.fromRGB(159, 99, 254)
+esptextcolor = Color3.fromRGB(159, 99, 254)
 local esptable = {}
 
 healthtargetname = false
@@ -218,10 +218,6 @@ local tracertextures = {
 }
 
 local crosshair = Drawing.new("Circle")
-
-local defaultfirerate = {}
-
-local createdThings = {}
 
 local viewmod_materials = {
     ["Forcefield"] = Enum.Material.ForceField,
@@ -6392,10 +6388,6 @@ local tracertextures = {
 }
 
 local crosshair = Drawing.new("Circle")
-
-local defaultfirerate = {}
-
-local createdThings = {}
 
 local viewmod_materials = {
     ["Forcefield"] = Enum.Material.ForceField,
