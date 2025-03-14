@@ -13,7 +13,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 
 _G.Loading = true
 library:init()
-
+script_key="A-2345634563245643456789"
 local allowed_keys = {
     "A-2345634563245643456789",
     "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY",
@@ -274,11 +274,20 @@ RotDesyncX = 0
 RotDesyncY = 0
 RotDesyncZ = 0
 
+SpinSpeedDesyncX = 0
+SpinDesyncX = false -- x desync spin
+
+SpinSpeedDesyncY = 0
+SpinDesyncY = false -- y desync spin
+
+SpinSpeedDesyncZ = 0
+SpinDesyncZ = false -- z desync spin
+
 local animatioffn = Instance.new("Animation")
 animatioffn.AnimationId = "rbxassetid://17360699557" -- new17360699557 | old10714003221
 
-local speedbool = false
-local speedboost = 1.2
+speedbool = false
+speedboost = 1.2
 
 local changerbool = false
 local changergrav = 95
@@ -2280,6 +2289,8 @@ desync:AddToggle({
         DesyncVisualize = v
         if Desync then
             visualPart.Transparency = v and 0 or 1
+        else
+            visualPart.Transparency = 1
         end
     end
 }):AddColor({
@@ -2291,6 +2302,21 @@ desync:AddToggle({
     open = false,
     callback = function(v)
         visualPart.Color = v
+    end
+})
+
+desync:AddList({
+    enabled = true,
+    text = "Visualizer Material", 
+    selected = "Forcefield",
+    flag = "DesyncVisualizeMaterial",
+    multi = false,
+    open = false,
+    max = 4,
+    values = {"ForceField", "Neon", "SmoothPlastic"},
+    risky = false,
+    callback = function(v)
+        visualPart.Material = Enum.Material[v]
     end
 })
 
