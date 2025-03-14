@@ -1677,7 +1677,7 @@ semifly:AddSlider({
 
 semifly:AddSeparator({
     enabled = true,
-    text = "Anti Aim Spin"
+    text = "Desync Anti Aim Spin"
 })
 
 semifly:AddToggle({
@@ -1686,11 +1686,11 @@ semifly:AddToggle({
     callback = function(v)
             xspinning = v
     if not xspinning then
-        xrot = 0
+        DesyncX = 0
     else
         coroutine.wrap(function()
-            while xspinning do
-                xrot = (xrot + xspeedspin * 2) % 360
+            while SpinDesyncX do
+                DesyncX = (DesyncX + xspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
         end)()
@@ -1720,11 +1720,11 @@ semifly:AddToggle({
     callback = function(v)
             yspinning = v
     if not yspinning then
-        yrot = 0
+        RotDesyncY = 0
     else
         coroutine.wrap(function()
             while yspinning do
-                yrot = (yrot + yspeedspin * 2) % 360
+                RotDesyncY = (RotDesyncY + yspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
         end)()
@@ -1754,11 +1754,11 @@ semifly:AddToggle({
     callback = function(v)
             zspinning = v
     if not zspinning then
-        zrot = 0
+        RotDesyncZ = 0
     else
         coroutine.wrap(function()
             while zspinning do
-                zrot = (zrot + zspeedspin * 2) % 360
+                RotDesyncZ = (RotDesyncZ + zspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
         end)()
