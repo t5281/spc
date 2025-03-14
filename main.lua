@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.7"
+local version = "v0.5"
 
 local detectedAdmins = {}
 
@@ -383,8 +383,8 @@ local instrelMODfunc
 camthirdp = false
 
 camthirdpX = 0
-camthirdpY = 1.5
-camthirdpZ = -3
+camthirdpY = 0
+camthirdpZ = 0
 
 AntiDrown = false
 AntiProjectile = true
@@ -492,6 +492,7 @@ local characterchams = visualstab:AddSection("Character Chams", 2)
 local inventorychecker = other:AddSection("Hotbar Checker", 1)
 local modchecker = other:AddSection("Staff Related", 1)
 local playerlogs = other:AddSection("Player Logs", 1)
+local cameraoffset = other:AddSection("Camera Offset", 1)
 
 local camzoom = other:AddSection("Zoom", 2)
 local camer = other:AddSection("Effects", 2)
@@ -1213,7 +1214,7 @@ gunmods:AddToggle({
     end
 })
 
---[[gunmods:AddToggle({
+gunmods:AddToggle({
     text = "Instant Reload",
     flag = "InstantReload",
     callback = function(v)
@@ -1223,7 +1224,7 @@ gunmods:AddToggle({
         require(game.ReplicatedStorage.Modules.FPS).reload = instrelOGfunc
     end
     end
-})]]
+})
 
 local originalValues = {}
 
@@ -2201,6 +2202,24 @@ desync:AddToggle({
     flag = "Desync",
     callback = function(v)
         Desync = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Desync",
+    mode = "toggle",
+    bind = "None",
+    flag = "DesyncBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        if _G.LoadingConfig == true then return end; if _G.Loading == true then return end
+
+        Desync = v
+    end,
+    keycallback = function(v)
+
     end
 })
 
@@ -3873,6 +3892,81 @@ playerlogs:AddSlider({
     end
 }):SetValue(4)
 
+cameraoffset:AddToggle({
+    text = "Modify Camera Offset",
+    tooltip = "Enables/Disables Camera Offset Modifier",
+    flag = "CamOffsetToggle",
+    callback = function(v)
+        camthirdp = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Camera Offset",
+    mode = "toggle",
+    bind = "None",
+    flag = "CamOffsetBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        if _G.LoadingConfig == true then return end; if _G.Loading == true then return end
+
+        camthirdp = v
+    end,
+    keycallback = function(v)
+
+    end
+})
+
+cameraoffset:AddSlider({
+    enabled = true,
+    text = "Offset X",
+    tooltip = "Camera Offset for X Axis",
+    flag = "CamOffsetX",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -7,
+    max = 7,
+    increment = 0.1,
+    callback = function(v)
+        camthirdpX = v
+    end
+})
+
+cameraoffset:AddSlider({
+    enabled = true,
+    text = "Offset Y",
+    tooltip = "Camera Offset for Y Axis",
+    flag = "CamOffsetY",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -5.5,
+    max = 7,
+    increment = 0.1,
+    callback = function(v)
+        camthirdpY = v
+    end
+})
+
+cameraoffset:AddSlider({
+    enabled = true,
+    text = "Offset Z",
+    tooltip = "Camera Offset for Z Axis",
+    flag = "CamOffsetZ",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -7,
+    max = 7,
+    increment = 0.1,
+    callback = function(v)
+        camthirdpZ = v
+    end
+})
+
 --tracers--
 
 local function runtracer(start, endp)
@@ -4546,12 +4640,13 @@ require(game.Players.LocalPlayer.PlayerScripts.PlayerModule.CameraModule.Transpa
     local v14_2_ = v14_3_.CurrentCamera
 
     local setto = 0
-    if camthirdp == false and thirdpersonvisualizer == false then
-        setto = 1
-    end
 
     if thirdpersonvisualizer == true then
         setto = 0
+    end
+
+    if thirdpersonvisualizer == false then
+        setto = 1
     end
 
     if v14_2_ then
@@ -4954,7 +5049,7 @@ instrelMODfunc = function(a1,a2)
                             v103_2_:Stop()
                             v103_4_ = a1.WeldedTool
                             v103_3_ = v103_4_.ItemRoot
-                            v103_2_ = v103_3_.Inspect
+                            v103_2_ = v103_3_.Sounds.Inspect
                             v103_2_:Stop()
                         end
                         v103_3_ = a1.settings
