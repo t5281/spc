@@ -14,7 +14,13 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 _G.Loading = true
 library:init()
 
-local allowed_keys = { "wefwefwefwef", "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS", "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI" }
+local allowed_keys = {
+    "A-2345634563245643456789",
+    "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY",
+    "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS",
+    "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI",
+    "jkdfvELkKJzdkYAeMGGABxwNArWxmFCx"
+}
 
 local function is_key_allowed(script_key)
     for _, key in ipairs(allowed_keys) do
