@@ -2262,7 +2262,7 @@ desync:AddToggle({
 desync:AddList({
     enabled = true,
     text = "Visualizer Material", 
-    selected = "Forcefield",
+    selected = "ForceField",
     flag = "DesyncVisualizeMaterial",
     multi = false,
     open = false,
