@@ -1948,26 +1948,44 @@ privatefeatures:AddToggle({
     callback = function(v)
         worldjesus = v
         if v then
-            while worldjesus do
-                wait()
-                local hitPart = workspace:Raycast(localplayer.Character:FindFirstChild("HumanoidRootPart").Position, Vector3.new(0, -5, 0) + localplayer.Character:FindFirstChild("HumanoidRootPart").CFrame.LookVector * 5, RaycastParams.new())
-                if hitPart and hitPart.Material == Enum.Material.Water then
-                    local clone = Instance.new("Part")
-                    clone.Parent = waterplatforms
-                    clone.Position = hitPart.Position
-                    clone.Anchored = true
-                    clone.CanCollide = true
-                    clone.Size = Vector3.new(10,0.2,10)
-                    clone.Transparency = 1
+            task.spawn(function()
+                while worldjesus do
+                    task.wait()
+
+                    local rootPart = localplayer.Character and localplayer.Character:FindFirstChild("HumanoidRootPart")
+                    if not rootPart then break end
+
+                    local hitPart = workspace:Raycast(
+                        rootPart.Position, 
+                        Vector3.new(0, -5, 0) + rootPart.CFrame.LookVector * 5, 
+                        RaycastParams.new()
+                    )
+
+                    if hitPart and hitPart.Material == Enum.Material.Water then
+                        if not waterplatforms then
+                            waterplatforms = Instance.new("Folder", workspace)
+                        end
+
+                        local clone = Instance.new("Part")
+                        clone.Parent = waterplatforms
+                        clone.Position = hitPart.Position
+                        clone.Anchored = true
+                        clone.CanCollide = true
+                        clone.Size = Vector3.new(10, 0.2, 10)
+                        clone.Transparency = 1
+                    end
                 end
-            end
+            end)
         else
-            for i,v in ipairs(waterplatforms:GetChildren()) do
-                v:Destroy()
+            if waterplatforms then
+                for _, v in ipairs(waterplatforms:GetChildren()) do
+                    v:Destroy()
+                end
             end
         end
     end
 })
+
 
 privatefeatures:AddToggle({
     text = "Bunnyhop",
@@ -2245,6 +2263,13 @@ desync:AddToggle({
             visualPart.Transparency = v and 0 or 1
         else
             visualPart.Transparency = 1
+        end
+
+        if _G.LoadingConfig and DesyncVisualize then
+            task.spawn(function()
+                task.wait(0.2)
+                visualPart.Transparency = 0
+            end)
         end
     end
 }):AddColor({
@@ -5893,6 +5918,10 @@ runs.RenderStepped:Connect(function(delta) --  fast
     end
 
     if charsemifly == false and localplayer.Character.Humanoid.PlatformStand == true then
+        localplayer.Character.Humanoid.PlatformStand = false
+    end
+
+    if Desync == false and localplayer.Character.Humanoid.PlatformStand == true then
         localplayer.Character.Humanoid.PlatformStand = false
     end
 
