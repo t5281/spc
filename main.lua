@@ -3,8 +3,8 @@ local version = "v0.5"
 
 local detectedAdmins = {}
 
-Decimals = 4
-Clock = os.clock()
+local Decimals = 4
+local Clock = os.clock()
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4ed5f/spec/refs/heads/main/lib-main"))({
     cheatname = "Specter.vip",
@@ -14,12 +14,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/3ws4e
 _G.Loading = true
 library:init()
 
-local allowed_keys = { 
-    "wefwefwefwef",
-    "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY",
-    "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS",
-    "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI"
-}
+local allowed_keys = { "wefwefwefwef", "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS", "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI" }
 
 local function is_key_allowed(script_key)
     for _, key in ipairs(allowed_keys) do
@@ -154,7 +149,7 @@ local aimFRIENDLIST = {}
 friendlistmode = "Blacklist"
 friendlistbots = false
 
-esptextcolor = Color3.fromRGB(159, 99, 254)
+local esptextcolor = Color3.fromRGB(159, 99, 254)
 local esptable = {}
 
 healthtargetname = false
@@ -261,10 +256,17 @@ undergroundcharrotZ = 0
 FullUnderToggle = false
 
 Desync = false
+
+DesyncVisualize = false
+local visualPart
+
 DesyncX = 0
 DesyncY = 0
 DesyncZ = 0
-local visualPart
+
+RotDesyncX = 0
+RotDesyncY = 0
+RotDesyncZ = 0
 
 local animatioffn = Instance.new("Animation")
 animatioffn.AnimationId = "rbxassetid://17360699557" -- new17360699557 | old10714003221
@@ -278,7 +280,6 @@ local changerspeed = 18
 local changerheight = 2
 local changerjump = 4
 
-local charsemiflybind = Enum.KeyCode.X
 local charsemifly = false
 local charsemiflydist = 6
 local charsemiflydistunlock = false
@@ -329,10 +330,10 @@ zrot = 0
 upangleresolver = false
 resolverangle = 0
 
-local hitmarkbool = false
-local hitmarkcolor = Color3.fromRGB(159, 99, 254)
-local hitmarkfade = 2
-local hitmarktexture = "Cross"
+hitmarkbool = false
+hitmarkcolor = Color3.fromRGB(159, 99, 254)
+hitmarkfade = 2
+hitmarktexture = "Cross"
 
 local hitsoundbool = false
 local hitsoundhead = "Neverlose"
@@ -2245,31 +2246,52 @@ effects:AddSeparator({
 })
 
 desync:AddToggle({
-    text = "Position Spoofer",
-    tooltip = "Enables/disables Position Spoofer",
+    text = "Desync",
+    tooltip = "Enables/disables Position Desync",
     flag = "Desync",
     callback = function(v)
         Desync = v
-        if Desync then
-            if not visualPart then
-                visualPart = Instance.new("Part")
-                visualPart.Size = Vector3.new(2, 2, 1)
-                visualPart.CanCollide = false
-                visualPart.Color = Color3.fromRGB(255, 0, 0)
-                visualPart.Anchored = true
-                visualPart.Material = Enum.Material.ForceField
-                visualPart.Parent = workspace
-            end
-        else
-            if visualPart then
-                visualPart:Destroy()
-                visualPart = nil
-            end
-        end
     end
 })
 
+local function createpart()
+    visualPart = Instance.new("Part")
+    visualPart.Size = Vector3.new(2, 2, 1)
+    visualPart.CanCollide = false
+    visualPart.Color = Color3.fromRGB(159, 99, 254)
+    visualPart.Anchored = true
+    visualPart.Transparency = 1
+    visualPart.Material = Enum.Material.ForceField
+    visualPart.Parent = workspace
+end
+createpart()
 
+desync:AddToggle({
+    text = "Visualize Desync",
+    tooltip = "Enables/disables Desync Visualizer",
+    flag = "DesyncVisualize",
+    callback = function(v)
+        DesyncVisualize = v
+        if Desync then
+            visualPart.Transparency = v and 0 or 1
+        end
+    end
+}):AddColor({
+    enabled = true,
+    text = "Desync Visualizer Color",
+    color = Color3.fromRGB(159, 99, 254),
+    flag = "DesyncVisualizeColor",
+    trans = 0,
+    open = false,
+    callback = function(v)
+        visualPart.Color = v
+    end
+})
+
+desync:AddSeparator({
+    enabled = true,
+    text = "Position Desync"
+})
 
 desync:AddSlider({
     enabled = true,
@@ -2295,8 +2317,8 @@ desync:AddSlider({
     suffix = "",
     dragging = true,
     focused = false,
-    min = -5,
-    max = 5,
+    min = -3,
+    max = 3,
     increment = 0.1,
     callback = function(v)
         DesyncY = v
@@ -2311,14 +2333,66 @@ desync:AddSlider({
     suffix = "",
     dragging = true,
     focused = false,
-    min = -10,
-    max = 10,
+    min = -5,
+    max = 5,
     increment = 0.1,
     callback = function(v)
         DesyncZ = v
     end
 })
 
+desync:AddSeparator({
+    enabled = true,
+    text = "Rotation Desync"
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "X Rotation",
+    tooltip = "Desync X Rotation Value",
+    flag = "DesyncXRot",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -180,
+    max = 180,
+    increment = 0.1,
+    callback = function(v)
+        RotDesyncX = v
+    end
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "Y Rotation",
+    tooltip = "Desync Y Rotation Value",
+    flag = "DesyncYRot",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -180,
+    max = 180,
+    increment = 0.1,
+    callback = function(v)
+        RotDesyncY = v
+    end
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "Z Rotation",
+    tooltip = "Desync Z Rotation Value",
+    flag = "DesyncZ",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -180,
+    max = 180,
+    increment = 0.1,
+    callback = function(v)
+        RotDesyncZ = v
+    end
+})
 
 wh:AddToggle({
     text = "ESP Enabled",
@@ -5754,9 +5828,11 @@ if Desync and localplayer.Character and localplayer.Character:FindFirstChild("Hu
     local desyncedpos = localplayer.Character.HumanoidRootPart.CFrame
     desyncedpos = desyncedpos + Vector3.new(DesyncX, DesyncY, DesyncZ)
 
-    visualPart.Position = desyncedpos.Position
-    --local newRotation = CFrame.Angles(math.rad(undergroundcharrotX), 0, math.rad(undergroundcharrotZ))
-    localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(desyncedpos.Position) --* newRotation
+    local newRotation = CFrame.Angles(math.rad(RotDesyncX), math.rad(RotDesyncY), math.rad(RotDesyncZ))
+
+    visualPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
+
+    localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
 
     runs.RenderStepped:Wait()
 
