@@ -68,7 +68,7 @@ if libraryxxt == false then
     library:SendNotification(("DL-T"), 0.3)
 end
 
-if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil and string.match(exec, "Seliware") == nil  and string.match(exec, "Nihon") == nil and string.match(exec, "AWP") == nil and string.match(exec, "Swift") == nil and string.match(exec, "Velocity") == nil and string.match(exec, "SirHurt") == nil then
+if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil then
     library:SendNotification((exec .. "is not supported"), 10)
     return
 else
