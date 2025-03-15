@@ -6068,6 +6068,7 @@ if aimtarget ~= nil then
         "WastelandBandit",
         "HighwayBandit",
         "Scav",
+        "ScavKing",
         "UNOSoldier"
     }
 
