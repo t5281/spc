@@ -6066,7 +6066,9 @@ if aimtarget ~= nil then
         "OccupantSoldier",
         "OccupantSurveyTeam",
         "WastelandBandit",
-        "HighwayBandit"
+        "HighwayBandit",
+        "Scav",
+        "UNOSoldier"
     }
 
     local isBot = false
