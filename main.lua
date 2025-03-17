@@ -68,7 +68,7 @@ if libraryxxt == false then
     library:SendNotification(("DL-T"), 0.3)
 end
 
-if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil then
+if string.match(exec, "Wave") == nil and string.match(exec, "Synapse") == nil and string.match(exec, "Potassium") == nil then
     library:SendNotification((exec .. "is not supported"), 10)
     return
 else
@@ -2713,21 +2713,13 @@ worldh:AddSlider({
         worldclock = v
     end
 })
-
+nofog = false
 worldh:AddToggle({
     text = "No Fog",
     tooltip = "Enables/Disables Fog",
     flag = "NoFog",
     callback = function(v)
-        if atmosphere then
-            if v then
-                atmosphere.Density = 0
-                atmosphere.Offset = 0
-            else
-                atmosphere.Density = originalDensity
-                atmosphere.Offset = originalOffset
-            end
-        end
+		nofog = v
     end
 })
 
@@ -5291,14 +5283,6 @@ if worldvisualstoggle then
     end)
 end
 
--- lighting
-
-if worldclockmodifier then
-    lighting.Changed:Connect(function()
-        lighting.ClockTime = worldclock
-    end)
-end
-
 --inventory checker--
 
 local function UpdateInventoryViewerLooks()
@@ -5770,26 +5754,40 @@ runs.Heartbeat:Connect(function(delta)
         game:GetService("ReplicatedStorage").Remotes.UpdateTilt:FireServer(upangleY)
     end
 
-if Desync and localplayer.Character and localplayer.Character:FindFirstChild("Humanoid") then
-    playerdesync[1] = localplayer.Character.HumanoidRootPart.CFrame
-    playerdesync[2] = localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity
+	if worldclockmodifier then
+    	lighting.ClockTime = worldclock
+	end
 
-    local desyncedpos = localplayer.Character.HumanoidRootPart.CFrame
-    desyncedpos = desyncedpos + Vector3.new(DesyncX, DesyncY, DesyncZ)
+	if atmosphere then
+    	if v then
+    	    atmosphere.Density = 0
+    	    atmosphere.Offset = 0
+    	else
+    	   atmosphere.Density = originalDensity
+    	   atmosphere.Offset = originalOffset
+    	end
+	end
 
-    local newRotation = CFrame.Angles(math.rad(RotDesyncX), math.rad(RotDesyncY), math.rad(RotDesyncZ))
+	if Desync and localplayer.Character and localplayer.Character:FindFirstChild("Humanoid") then
+    	playerdesync[1] = localplayer.Character.HumanoidRootPart.CFrame
+    	playerdesync[2] = localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity
 
-    visualPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
+    	local desyncedpos = localplayer.Character.HumanoidRootPart.CFrame
+    	desyncedpos = desyncedpos + Vector3.new(DesyncX, DesyncY, DesyncZ)
 
-    localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
+    	local newRotation = CFrame.Angles(math.rad(RotDesyncX), math.rad(RotDesyncY), math.rad(RotDesyncZ))
 
-    runs.RenderStepped:Wait()
+    	visualPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
 
-    if localplayer.Character and localplayer.Character.HumanoidRootPart then
-        localplayer.Character.HumanoidRootPart.CFrame = playerdesync[1]
-        localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity = playerdesync[2]
-    end
-end
+    	localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
+
+    	runs.RenderStepped:Wait()
+
+    	if localplayer.Character and localplayer.Character.HumanoidRootPart then
+        	localplayer.Character.HumanoidRootPart.CFrame = playerdesync[1]
+        	localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity = playerdesync[2]
+    	end
+	end
 
 end)
 
