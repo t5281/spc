@@ -103,8 +103,6 @@ task.spawn(function()
     end
 end)
 
-delfile(fileName)
-
 local elapsedTime = os.clock() - startTime
 print("Specter.vip has loaded in " .. string.format("%.6f", elapsedTime) .. "s!")
 
