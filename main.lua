@@ -5523,7 +5523,59 @@ function fly_getoffset(dir)
 	return offset
 end
 
--- admin detector --
+-- staff list
+
+--[[
+task.spawn(function()
+    while true do
+        local currentAdmins = {}
+        local adminCount = 0
+
+        for playerName, isAdmin in pairs(detectedAdmins) do
+            if isAdmin then
+                if not existingLabels[playerName] then
+                    local template = StaffLabel:Clone()
+                    template.Parent = StaffList
+                    template.Text = playerName
+                    existingLabels[playerName] = template
+                end
+                currentAdmins[playerName] = true
+                adminCount += 1
+            end
+        end
+
+        for playerName, label in pairs(existingLabels) do
+            if not detectedAdmins[playerName] then
+                label:Destroy()
+                existingLabels[playerName] = nil
+            end
+        end
+
+        StaffTitle.Text = "STAFF IN SERVER (" .. adminCount .. ")"
+
+        wait(0.02)
+    end
+end)
+]]
+
+local function UpdateStaffListLooks()
+    StaffLabel.TextColor3 = stafflabelcolor
+    XLine.BackgroundColor3 = stafflinecolor
+    StaffTitle.TextColor3 = stafftitlecolor
+end
+
+--global cycle--
+
+task.spawn(function() -- very slow
+    while wait(10.5) do
+        table.clear(aimignoreparts)
+        for i,v in ipairs(workspace:GetDescendants()) do
+            if v:GetAttribute("PassThrough") then
+                table.insert(aimignoreparts, v)
+            end
+        end
+    end
+end)
 
 local function CheckAdminStatus(player)
     local replicatedPlayers = rp:FindFirstChild("Players")
@@ -5555,6 +5607,7 @@ local function SoundEffect(volume)
     sound:Destroy()
 end
 
+--[[
 task.spawn(function()
     while true do
         for _, player in ipairs(Players:GetPlayers()) do
@@ -5571,6 +5624,7 @@ task.spawn(function()
         task.wait(1)
     end
 end)
+]]
 
 Players.PlayerAdded:Connect(function(player)
     task.delay(1, function()
@@ -5592,64 +5646,11 @@ Players.PlayerRemoving:Connect(function(player)
     end
 end)
 
--- staff list
-
 local existingLabels = {}
-
-task.spawn(function()
-    while true do
-        local currentAdmins = {}
-        local adminCount = 0
-
-        for playerName, isAdmin in pairs(detectedAdmins) do
-            if isAdmin then
-                if not existingLabels[playerName] then
-                    local template = StaffLabel:Clone()
-                    template.Parent = StaffList
-                    template.Text = playerName
-                    existingLabels[playerName] = template
-                end
-                currentAdmins[playerName] = true
-                adminCount += 1
-            end
-        end
-
-        for playerName, label in pairs(existingLabels) do
-            if not detectedAdmins[playerName] then
-                label:Destroy()
-                existingLabels[playerName] = nil
-            end
-        end
-
-        StaffTitle.Text = "STAFF IN SERVER (" .. adminCount .. ")"
-
-        wait(0.02)
-    end
-end)
-
-
-local function UpdateStaffListLooks()
-    StaffLabel.TextColor3 = stafflabelcolor
-    XLine.BackgroundColor3 = stafflinecolor
-    StaffTitle.TextColor3 = stafftitlecolor
-end
-
---global cycle--
-
-task.spawn(function() -- very slow
-    while wait(10.5) do
-        table.clear(aimignoreparts)
-        for i,v in ipairs(workspace:GetDescendants()) do
-            if v:GetAttribute("PassThrough") then
-                table.insert(aimignoreparts, v)
-            end
-        end
-    end
-end)
 
 task.spawn(function() -- slow
     while wait(1) do
-
+		
         local function handleFoliage()
             if workspace:FindFirstChild("SpawnerZones") then
                 for i, v in ipairs(workspace.SpawnerZones.Foliage:GetDescendants()) do
@@ -5726,6 +5727,43 @@ task.spawn(function() -- slow
                 end
             end
         end
+
+		for _, player in ipairs(Players:GetPlayers()) do
+            local isAdmin = CheckAdminStatus(player)
+            if isAdmin and not detectedAdmins[player.Name] then
+                detectedAdmins[player.Name] = true
+                print("[SPECTER.VIP] Admin joined:" .. player.Name)
+                library:SendNotification(("Admin Detected: " .. player.Name), 15)
+                SoundEffect(moddetectorvolume)
+            elseif not isAdmin and detectedAdmins[player.Name] then
+                detectedAdmins[player.Name] = nil
+            end
+        end
+
+		local currentAdmins = {}
+        local adminCount = 0
+
+        for playerName, isAdmin in pairs(detectedAdmins) do
+            if isAdmin then
+                if not existingLabels[playerName] then
+                    local template = StaffLabel:Clone()
+                    template.Parent = StaffList
+                    template.Text = playerName
+                    existingLabels[playerName] = template
+                end
+                currentAdmins[playerName] = true
+                adminCount += 1
+            end
+        end
+
+        for playerName, label in pairs(existingLabels) do
+            if not detectedAdmins[playerName] then
+                label:Destroy()
+                existingLabels[playerName] = nil
+            end
+        end
+
+        StaffTitle.Text = "STAFF IN SERVER (" .. adminCount .. ")"
 
         handleFoliage()
         handleInventory()
