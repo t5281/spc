@@ -21,7 +21,6 @@ local allowed_keys = {
     "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI", -- 480705478687457330 t
     "YVxmhjlBANSfotPvlbGYtUamIRaaAWHX", -- 1122599312283676753 u
     "CDxOvoHgjzeaDMxiEzNFTHCppfsbFluY", -- 1174890399647666197 u
-    "ExxSVOBGdikqKZVhEaSQzmktSfjljqFN", -- 0 u
     "jkdfvELkKJzdkYAeMGGABxwNArWxmFCx" -- 824425308149121024 t
 }
 
