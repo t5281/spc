@@ -16,10 +16,13 @@ library:init()
 
 local allowed_keys = {
     "A-2345634563245643456789",
-    "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY",
-    "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS",
-    "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI",
-    "jkdfvELkKJzdkYAeMGGABxwNArWxmFCx"
+    "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", -- 1269420797420638301 t
+    "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS", -- 473962768643522580 t
+    "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI", -- 480705478687457330 t
+    "YVxmhjlBANSfotPvlbGYtUamIRaaAWHX", -- 1122599312283676753 u
+    "CDxOvoHgjzeaDMxiEzNFTHCppfsbFluY", -- 1174890399647666197 u
+    "ExxSVOBGdikqKZVhEaSQzmktSfjljqFN", -- 0 u
+    "jkdfvELkKJzdkYAeMGGABxwNArWxmFCx" -- 824425308149121024 t
 }
 
 local function is_key_allowed(script_key)
