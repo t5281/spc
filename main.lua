@@ -483,7 +483,7 @@ local gunmods = combat:AddSection("Gun Manipulation", 2)
 local tarinfo = combat:AddSection("Target Info", 2)
 local resolver = combat:AddSection("Resolver", 2)
 
-local semifly = playerstab:AddSection("Character Mods", 1)
+local semifly = playerstab:AddSection("Semi Fly", 1)
 local desync = playerstab:AddSection("Desync", 1)
 local privatefeatures = playerstab:AddSection("Player Exploits", 2)
 
