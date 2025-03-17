@@ -151,11 +151,10 @@ end
 peekkillheight = 30
 timeout = 0.3
 
-local aimFRIENDLIST = {}
-friendlistmode = "Blacklist"
-friendlistbots = false
+local Friendlist = {}
+FLM = "Blacklist"
+FLB = false
 
-local esptextcolor = Color3.fromRGB(159, 99, 254)
 local esptable = {}
 
 healthtargetname = false
@@ -262,8 +261,6 @@ underground = -2.6
 undergroundcharrotX = 45
 undergroundcharrotZ = 0
 
-FullUnderToggle = false
-
 Desync = false
 
 DesyncVisualize = false
@@ -277,14 +274,14 @@ RotDesyncX = 0
 RotDesyncY = 0
 RotDesyncZ = 0
 
-SpinSpeedDesyncX = 0
-SpinDesyncX = false -- x desync spin
+xspeedspin = 0
+xspinning = false
 
-SpinSpeedDesyncY = 0
-SpinDesyncY = false -- y desync spin
+yspeedspin = 0
+yspinning = false
 
-SpinSpeedDesyncZ = 0
-SpinDesyncZ = false -- z desync spin
+zspeedspin = 0
+zspinning = false
 
 local animatioffn = Instance.new("Animation")
 animatioffn.AnimationId = "rbxassetid://17360699557" -- new17360699557 | old10714003221
@@ -311,7 +308,6 @@ local charsemiflyspeed = 18
 local semifly_bodyvel = nil
 
 bunnyhop = false
-
 worldleaves = false
 
 worldclockmodifier = false
@@ -329,26 +325,10 @@ worldvisualstoggle = false
 worldambient = Color3.fromRGB(255,255,255)
 worldoutdoor = Color3.fromRGB(255,255,255)
 
-charantiaim_underground = false
 fallanim = false
-
-flipback = false
 
 upangletoggle = false
 upangleY = 0
-
-xspeedspin = 0
-xspinning = false
-
-yspeedspin = 0
-yspinning = false
-
-zspeedspin = 0
-zspinning = false
-
-xrot = 0
-yrot = 0
-zrot = 0
 
 upangleresolver = false
 resolverangle = 0
@@ -2275,7 +2255,7 @@ desync:AddSlider({
     enabled = true,
     text = "Z Rotation",
     tooltip = "Desync Z Rotation Value",
-    flag = "DesyncZ",
+    flag = "DesyncZRot",
     suffix = "",
     dragging = true,
     focused = false,
@@ -2301,7 +2281,7 @@ desync:AddToggle({
         DesyncX = 0
     else
         coroutine.wrap(function()
-            while SpinDesyncX do
+            while xspinning do
                 DesyncX = (DesyncX + xspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
@@ -2712,6 +2692,7 @@ worldh:AddToggle({
     noindicator = false,
     callback = function(v)
         worldclockmodifier = v
+
     end,
     keycallback = function(v)
 
@@ -4145,13 +4126,13 @@ if not localplayer.Character or not localplayer.Character:FindFirstChild("Humano
         for _, botfold in ipairs(workspace.AiZones:GetChildren()) do
             for _, bot in ipairs(botfold:GetChildren()) do
                 if bot:IsA("Model") and bot:FindFirstChild("Humanoid") and bot.Humanoid.Health > 0 then
-                    if friendlistbots then
-                        if friendlistmode == "Blacklist" then 
-                            if table.find(aimFRIENDLIST, bot.Name) ~= nil then
+                    if FLB then
+                        if FLM == "Blacklist" then 
+                            if table.find(Friendlist, bot.Name) ~= nil then
                                 continue
                             end
-                        elseif friendlistmode == "Whitelist" then 
-                            if table.find(aimFRIENDLIST, bot.Name) == nil then
+                        elseif FLM == "Whitelist" then 
+                            if table.find(Friendlist, bot.Name) == nil then
                                 continue
                             end
                         end
@@ -4181,12 +4162,12 @@ if not localplayer.Character or not localplayer.Character:FindFirstChild("Humano
 
     for _, pottar in ipairs(game.Players:GetPlayers()) do --priority 1 (players)
         if pottar ~= localplayer and pottar.Character and localplayer.Character.PrimaryPart ~= nil then
-            if friendlistmode == "Blacklist" then 
-                if table.find(aimFRIENDLIST, pottar.Name) ~= nil then
+            if FLM == "Blacklist" then 
+                if table.find(Friendlist, pottar.Name) ~= nil then
                     continue
                 end
-            elseif friendlistmode == "Whitelist" then 
-                if table.find(aimFRIENDLIST, pottar.Name) == nil then
+            elseif FLM == "Whitelist" then 
+                if table.find(Friendlist, pottar.Name) == nil then
                     continue
                 end
             end
@@ -5310,6 +5291,13 @@ if worldvisualstoggle then
     end)
 end
 
+-- lighting
+
+if worldclockmodifier then
+    lighting.Changed:Connect(function()
+        lighting.ClockTime = worldclock
+    end)
+end
 
 --inventory checker--
 
@@ -5444,43 +5432,7 @@ task.spawn(function()
     end
 end)
 
--- anti aim
-
-function FlipBack()
-    local characterxx = localplayer.Character or localplayer.CharacterAdded:Wait()
-    local humanoidRootPart = characterxx:WaitForChild("HumanoidRootPart")
-    local rootCFrame = humanoidRootPart.CFrame
-    local position = rootCFrame.Position
-    local forcedRotation = CFrame.Angles(math.rad(0), 0, 0)
-    
-    localplayer.Character.Humanoid.PlatformStand = true
-    humanoidRootPart.CFrame = CFrame.new(position) * forcedRotation
-end
-
--- resolver
---[[
-spawn(function()
-    while animresolver do
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= localplayer then
-                local character = player.Character
-                if character then
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        local animator = humanoid:FindFirstChildOfClass("Animator")
-                        if animator then
-                            for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-                                track:Stop()
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        task.wait(0.02)
-    end
-end)
-]]
+-- upangle
 
 local Hooks = {}
 
@@ -5798,7 +5750,6 @@ task.spawn(function() -- slow
     end
 end)
 
-local dysenc = {}
 local playerdesync = {}
 
 local fpsrequired = require(game.ReplicatedStorage.Modules.FPS)
@@ -5879,10 +5830,6 @@ runs.RenderStepped:Connect(function(delta) --  fast
         localplayer.Character.Humanoid.PlatformStand = false
     end
 
-    if Desync == false and localplayer.Character.Humanoid.PlatformStand == true then
-        localplayer.Character.Humanoid.PlatformStand = false
-    end
-
     if aimtrigger and aimtarget ~= nil then
         if not uis.MouseIconEnabled then
             task.spawn(function()
@@ -5891,77 +5838,6 @@ runs.RenderStepped:Connect(function(delta) --  fast
                 mouse1release()
             end)
         end
-    end
-
-    if charsemifly and charantiaim_underground then
-        flipback = true
-    elseif charsemifly == false and charantiaim_underground and flipback then
-        localplayer.Character.Humanoid.PlatformStand = true
-        FlipBack()
-        localplayer.Character.Humanoid.PlatformStand = true
-        flipback = false
-    end
-
-    local function flipCharacterUpsideDown()
-        local characterxx = localplayer.Character or localplayer.CharacterAdded:Wait()
-        local humanoidRootPart = characterxx:WaitForChild("HumanoidRootPart")
-        local rootCFrame = humanoidRootPart.CFrame
-        local position = rootCFrame.Position
-        local forcedRotation = CFrame.Angles(math.rad(xrot), yrot, zrot)
-
-        humanoidRootPart.CFrame = CFrame.new(position) * forcedRotation
-    end
-    
-    if worldclockmodifier == true then
-        game.Lighting.ClockTime = worldclock
-    end
-
-    local bodyparts = {
-        "Head",
-        "HeadTopHitBox",
-        "FaceHitBox",
-        "UpperTorso",
-        "LeftUpperArm",
-        "RightUpperArm",
-        "LeftLowerArm",
-        "RightLowerArm",
-        "LeftHand",
-        "RightHand",
-        "LeftUpperLeg",
-        "RightUpperLeg",
-        "LeftLowerLeg",
-        "RightLowerLeg",
-        "LeftFoot",
-        "RightFoot"
-    }
-
-    local character = localplayer.Character or localplayer.CharacterAdded:Wait()
-    local originalCollisions = {}
-
-    local function enableNoclip(character)
-        for _, partName in pairs(bodyparts) do
-            local part = character:FindFirstChild(partName)
-            if part then
-                originalCollisions[partName] = part.CanCollide
-                part.CanCollide = false
-            end
-        end
-    end
-
-    local function disableNoclip(character)
-        for _, partName in pairs(bodyparts) do
-            local part = character:FindFirstChild(partName)
-            if part and originalCollisions[partName] ~= nil then
-                part.CanCollide = originalCollisions[partName]
-            end
-        end
-    end
-
-    if charsemifly and charantiaim_underground then
-        flipCharacterUpsideDown()
-        enableNoclip(character)
-    else
-        disableNoclip(character)
     end
 
     if charsemifly and localplayer.Character then
