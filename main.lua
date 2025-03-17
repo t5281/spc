@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.5"
+local version = "v0.6"
 
 local detectedAdmins = {}
 
@@ -129,7 +129,7 @@ local aiminfrange = false
 local aimtarget = nil
 local aimtargetpart = nil
 local aimdynamicfov = false
-local aimpart = "Head"
+local bparts = {}
 local aimtype = "Silent Aim"
 local aimfov = 150
 local aimdistance = 1100
@@ -254,6 +254,9 @@ removeClothes = false
 storedProperties = {}
 storedSurfaceAppearances = {}
 
+stopanims = false
+testpos = 1.29
+
 animpos = 0.82
 underground = -2.6
 undergroundcharrotX = 45
@@ -289,11 +292,17 @@ animatioffn.AnimationId = "rbxassetid://17360699557" -- new17360699557 | old1071
 speedbool = false
 speedboost = 1.2
 
-local changerbool = false
-local changergrav = 95
-local changerspeed = 18
-local changerheight = 2
-local changerjump = 4
+ModifyWalkspeed = false
+WalkspeedV = 18
+
+ModifyJump = false
+JumpV = 4
+
+ModifyHip = false
+HipV = 2
+
+ModifyGrav = false
+GravV = 80
 
 local charsemifly = false
 local charsemiflydist = 6
@@ -326,22 +335,21 @@ fallanim = false
 flipback = false
 
 upangletoggle = false
-upangleY = 0 -- 0.03070496954023838
+upangleY = 0
 
 xspeedspin = 0
-xspinning = false -- xrot spin
+xspinning = false
 
 yspeedspin = 0
-yspinning = false -- yrot spin
+yspinning = false
 
 zspeedspin = 0
-zspinning = false -- zrot spin
+zspinning = false
 
 xrot = 0
 yrot = 0
 zrot = 0
 
---animresolver = false
 upangleresolver = false
 resolverangle = 0
 
@@ -401,8 +409,6 @@ trailcolor = Color3.fromRGB(159, 99, 254)
 local valcache = {
     ["7.62x54AP"] = 1,
 }
-
---drawing setup--
 
 aimfovcircle.Visible = false
 aimfovcircle.Radius = aimfov
@@ -478,8 +484,8 @@ local tarinfo = combat:AddSection("Target Info", 2)
 local resolver = combat:AddSection("Resolver", 2)
 
 local semifly = playerstab:AddSection("Character Mods", 1)
+local desync = playerstab:AddSection("Desync", 1)
 local privatefeatures = playerstab:AddSection("Player Exploits", 2)
-local desync = playerstab:AddSection("Desync", 2)
 
 local wh = visualstab:AddSection("Extra-Sensory Perception", 1)
 local viewmod = visualstab:AddSection("Viewmodel", 1)
@@ -896,14 +902,19 @@ aim:AddList({
     text = "Hitbox", 
     tooltip = "Aimbot Hitbox",
     selected = "Head",
-    flag = "Hitbox",
-    multi = false,
+    flag = "AimbotHitbox",
+    multi = true,
     open = false,
     max = 4,
-    values = {"Head", "HeadTop", "Face", "Upper Body", "Upper Torso", "Lower Torso", "Legs", "Random"},
+    values = {"Head", "HeadTopHitBox", "FaceHitBox", "UpperTorso", "LowerTorso", "LeftUpperArm", "RightUpperArm", "LeftLowerArm", "RightLowerArm", "LeftHand", "RightHand", "LeftUpperLeg", "RightUpperLeg", "LeftLowerLeg", "RightLowerLeg", "LeftFoot", "RightFoot"},
     risky = false,
     callback = function(v)
-        aimpart = v
+        if _G.Loading == true then return end
+        bparts = {}
+
+        for _, f in ipairs(v) do
+            table.insert(bparts, f)
+        end
     end
 })
 
@@ -1524,264 +1535,6 @@ semifly:AddSlider({
     end
 }):SetValue(18)
 
-semifly:AddSeparator({
-    enabled = true,
-    text = "Anti Aim Toggles"
-})
-
-semifly:AddToggle({
-    text = "Custom Rotation",
-    flag = "CustomRotation",
-    risky = true,
-    callback = function(v)
-        charantiaim_underground = v
-    end
-}):AddBind({
-    enabled = true,
-    text = "Custom Rotation",
-    mode = "toggle",
-    bind = "None",
-    flag = "CustomRotationBind",
-    state = false,
-    nomouse = false,
-    risky = false,
-    noindicator = false,
-    callback = function(v)
-        charantiaim_underground = v
-    end,
-    keycallback = function(v)
-
-    end
-})
-
-local character = localplayer.Character or localplayer.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local animationxx = Instance.new("Animation")
-animationxx.AnimationId = "rbxassetid://12839509307"
-local animTrackHH = humanoid:LoadAnimation(animationxx)
-
-semifly:AddToggle({
-    text = "Play Falling Animation",
-    flag = "PlayFallAnim",
-    risky = true,
-    callback = function(v)
-        fallanim = v
-
-        if fallanim then
-            animTrackHH:Play()
-            wait(0.1)
-            animTrackHH:AdjustSpeed(0)
-        else
-            animTrackHH:Stop()
-            wait(0.1)
-            animTrackHH:AdjustSpeed(0)
-        end
-    end
-})
-
-
-
-semifly:AddToggle({
-    text = "UpAngle Toggle",
-    flag = "UpAngleToggle",
-    risky = true,
-    callback = function(v)
-        upangletoggle = v
-    end
-}):AddBind({
-    enabled = true,
-    text = "Up Angle",
-    mode = "toggle",
-    bind = "None",
-    flag = "UpAngleCharacterBind",
-    state = false,
-    nomouse = false,
-    risky = false,
-    noindicator = false,
-    callback = function(v)
-        upangletoggle = v
-    end,
-    keycallback = function(v)
-
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "UpAngle Value",
-    tooltip = "UpAngle Value",
-    flag = "UpAngleValue",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = -5,
-    max = 5,
-    increment = 1,
-    callback = function(v)
-        upangleY = v
-    end
-})
-
-semifly:AddSeparator({
-    enabled = true,
-    text = "Anti Aim Parameters"
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "X Rotation",
-    tooltip = "X Axis Rotation",
-    flag = "XRotation",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 180,
-    increment = 1,
-    callback = function(v)
-        xrot = v
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "Y Rotation",
-    tooltip = "Y Axis Rotation",
-    flag = "YRotation",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 180,
-    increment = 1,
-    callback = function(v)
-        yrot = v
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "Z Rotation",
-    tooltip = "Z Axis Rotation",
-    flag = "ZRotation",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 180,
-    increment = 1,
-    callback = function(v)
-        zrot = v
-    end
-})
-
-semifly:AddSeparator({
-    enabled = true,
-    text = "Desync Anti Aim Spin"
-})
-
-semifly:AddToggle({
-    text = "Spin X",
-    flag = "SpinX",
-    callback = function(v)
-            xspinning = v
-    if not xspinning then
-        DesyncX = 0
-    else
-        coroutine.wrap(function()
-            while SpinDesyncX do
-                DesyncX = (DesyncX + xspeedspin * 2) % 360
-                runs.RenderStepped:Wait()
-            end
-        end)()
-    end
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "X Rotation Speed",
-    tooltip = "X Axis Rotation Speed",
-    flag = "SpinXSpeed",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 20,
-    increment = 0.1,
-    callback = function(v)
-        xspeedspin = v
-    end
-})
-
-semifly:AddToggle({
-    text = "Spin Y",
-    flag = "SpinY",
-    callback = function(v)
-            yspinning = v
-    if not yspinning then
-        RotDesyncY = 0
-    else
-        coroutine.wrap(function()
-            while yspinning do
-                RotDesyncY = (RotDesyncY + yspeedspin * 2) % 360
-                runs.RenderStepped:Wait()
-            end
-        end)()
-    end
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "Y Rotation Speed",
-    tooltip = "Y Axis Rotation Speed",
-    flag = "SpinYSpeed",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 20,
-    increment = 0.1,
-    callback = function(v)
-        yspeedspin = v
-    end
-})
-
-semifly:AddToggle({
-    text = "Spin Z",
-    flag = "SpinZ",
-    callback = function(v)
-            zspinning = v
-    if not zspinning then
-        RotDesyncZ = 0
-    else
-        coroutine.wrap(function()
-            while zspinning do
-                RotDesyncZ = (RotDesyncZ + zspeedspin * 2) % 360
-                runs.RenderStepped:Wait()
-            end
-        end)()
-    end
-    end
-})
-
-semifly:AddSlider({
-    enabled = true,
-    text = "Z Rotation Speed",
-    tooltip = "Z Axis Rotation Speed",
-    flag = "SpinZSpeed",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 20,
-    increment = 0.1,
-    callback = function(v)
-        zspeedspin = v
-    end
-})
-
 function startspeedhack()
     local speaker = game:GetService("Players").LocalPlayer
     local chr = speaker.Character
@@ -1850,23 +1603,23 @@ privatefeatures:AddSeparator({
 })
 
 privatefeatures:AddToggle({
-    text = "Player Exploit Toggle",
-    flag = "PlayerExploitToggle",
+    text = "Walkspeed Modifier",
+    flag = "WalkspeedToggle",
     callback = function(v)
-        changerbool = v
+        ModifyWalkspeed = v
     end
 }):AddBind({
     enabled = true,
-    text = "Player Exploits",
+    text = "Walkspeed",
     mode = "toggle",
     bind = "None",
-    flag = "PlayerExploitBind",
+    flag = "WalkspeedToggleBind",
     state = false,
     nomouse = false,
     risky = false,
     noindicator = false,
     callback = function(v)
-        changerbool = v
+        ModifyWalkspeed = v
     end,
     keycallback = function(v)
 
@@ -1885,9 +1638,33 @@ privatefeatures:AddSlider({
     max = 70,
     increment = 0.1,
     callback = function(v)
-        changerspeed = v
+        WalkspeedV = v
     end
 }):SetValue(18)
+
+privatefeatures:AddToggle({
+    text = "Jumppower Modifier",
+    flag = "JumppowerToggle",
+    callback = function(v)
+        JumpV = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Jumppower",
+    mode = "toggle",
+    bind = "None",
+    flag = "JumppowerToggleBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        ModifyJump = v
+    end,
+    keycallback = function(v)
+
+    end
+})
 
 privatefeatures:AddSlider({
     enabled = true,
@@ -1901,9 +1678,33 @@ privatefeatures:AddSlider({
     max = 25,
     increment = 0.1,
     callback = function(v)
-        changerjump = v
+        JumpV = v
     end
 }):SetValue(4)
+
+privatefeatures:AddToggle({
+    text = "Hipheight Modifier",
+    flag = "HipheightToggle",
+    callback = function(v)
+        ModifyHip = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Hipheight",
+    mode = "toggle",
+    bind = "None",
+    flag = "HipheightToggleBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        ModifyHip = v
+    end,
+    keycallback = function(v)
+
+    end
+})
 
 privatefeatures:AddSlider({
     enabled = true,
@@ -1917,9 +1718,33 @@ privatefeatures:AddSlider({
     max = 25,
     increment = 0.1,
     callback = function(v)
-        changerheight = v
+        HipV = v
     end
 }):SetValue(2)
+
+privatefeatures:AddToggle({
+    text = "Gravity Modifier",
+    flag = "GravityyToggle",
+    callback = function(v)
+        ModifyGrav = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Gravity",
+    mode = "toggle",
+    bind = "None",
+    flag = "GravityToggleBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        ModifyGrav = v
+    end,
+    keycallback = function(v)
+
+    end
+})
 
 privatefeatures:AddSlider({
     enabled = true,
@@ -1933,9 +1758,9 @@ privatefeatures:AddSlider({
     max = 300,
     increment = 1,
     callback = function(v)
-        changergrav = v
+        GravV = v
     end
-}):SetValue(95)
+}):SetValue(80)
 
 privatefeatures:AddSeparator({
     enabled = true,
@@ -2006,6 +1831,12 @@ privatefeatures:AddToggle({
     end
 })
 
+local humanoid = character:WaitForChild("Humanoid")
+local animationxx = Instance.new("Animation")
+animationxx.AnimationId = "rbxassetid://10921278648" -- 10921159222
+local animTrackHH = humanoid:LoadAnimation(animationxx)
+animTrackHH.TimePosition = testpos
+
 privatefeatures:AddToggle({
     text = "Gnome Mode",
     flag = "GnomeMode",
@@ -2029,6 +1860,47 @@ privatefeatures:AddToggle({
     end,
     keycallback = function(v)
 
+    end
+})
+
+privatefeatures:AddToggle({
+    text = "UpAngle Toggle",
+    flag = "UpAngleToggle",
+    risky = true,
+    callback = function(v)
+        upangletoggle = v
+    end
+}):AddBind({
+    enabled = true,
+    text = "Up Angle",
+    mode = "toggle",
+    bind = "None",
+    flag = "UpAngleCharacterBind",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+        upangletoggle = v
+    end,
+    keycallback = function(v)
+
+    end
+})
+
+privatefeatures:AddSlider({
+    enabled = true,
+    text = "UpAngle Value",
+    tooltip = "UpAngle Value",
+    flag = "UpAngleValue",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = -5,
+    max = 5,
+    increment = 1,
+    callback = function(v)
+        upangleY = v
     end
 })
 
@@ -2241,6 +2113,16 @@ desync:AddToggle({
     end
 })
 
+desync:AddToggle({
+    text = "Play Falling Animation",
+    flag = "PlayFallAnim",
+    risky = true,
+    tooltip = "Plays the falling animation when Desync is enabled.",
+    callback = function(v)
+        fallanim = v; stopanims = v
+    end
+})
+
 local function createpart()
     visualPart = Instance.new("Part")
     visualPart.Size = Vector3.new(2, 2, 1)
@@ -2402,6 +2284,113 @@ desync:AddSlider({
     increment = 0.1,
     callback = function(v)
         RotDesyncZ = v
+    end
+})
+
+desync:AddSeparator({
+    enabled = true,
+    text = "Desync Rotation Spin"
+})
+
+desync:AddToggle({
+    text = "Spin X",
+    flag = "SpinX",
+    callback = function(v)
+            xspinning = v
+    if not xspinning then
+        DesyncX = 0
+    else
+        coroutine.wrap(function()
+            while SpinDesyncX do
+                DesyncX = (DesyncX + xspeedspin * 2) % 360
+                runs.RenderStepped:Wait()
+            end
+        end)()
+    end
+    end
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "X Rotation Speed",
+    tooltip = "X Axis Rotation Speed",
+    flag = "SpinXSpeed",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0,
+    max = 20,
+    increment = 0.1,
+    callback = function(v)
+        xspeedspin = v
+    end
+})
+
+desync:AddToggle({
+    text = "Spin Y",
+    flag = "SpinY",
+    callback = function(v)
+            yspinning = v
+    if not yspinning then
+        RotDesyncY = 0
+    else
+        coroutine.wrap(function()
+            while yspinning do
+                RotDesyncY = (RotDesyncY + yspeedspin * 2) % 360
+                runs.RenderStepped:Wait()
+            end
+        end)()
+    end
+    end
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "Y Rotation Speed",
+    tooltip = "Y Axis Rotation Speed",
+    flag = "SpinYSpeed",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0,
+    max = 20,
+    increment = 0.1,
+    callback = function(v)
+        yspeedspin = v
+    end
+})
+
+desync:AddToggle({
+    text = "Spin Z",
+    flag = "SpinZ",
+    callback = function(v)
+            zspinning = v
+    if not zspinning then
+        RotDesyncZ = 0
+    else
+        coroutine.wrap(function()
+            while zspinning do
+                RotDesyncZ = (RotDesyncZ + zspeedspin * 2) % 360
+                runs.RenderStepped:Wait()
+            end
+        end)()
+    end
+    end
+})
+
+desync:AddSlider({
+    enabled = true,
+    text = "Z Rotation Speed",
+    tooltip = "Z Axis Rotation Speed",
+    flag = "SpinZSpeed",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0,
+    max = 20,
+    increment = 0.1,
+    callback = function(v)
+        zspeedspin = v
     end
 })
 
@@ -4143,72 +4132,14 @@ if not localplayer.Character or not localplayer.Character:FindFirstChild("Humano
         ammodistance = globalammo:GetAttribute("MuzzleVelocity")
     end
 
-    local bparts = {
-        "Head",
-        "HeadTopHitBox",
-        "FaceHitBox",
-        "UpperTorso",
-        "LowerTorso",
-        "LeftUpperArm",
-        "RightUpperArm",
-        "LeftLowerArm",
-        "RightLowerArm",
-        "LeftHand",
-        "RightHand",
-        "LeftUpperLeg",
-        "RightUpperLeg",
-        "LeftLowerLeg",
-        "RightLowerLeg",
-        "LeftFoot",
-        "RightFoot"
-    }
-
-    local legparts = {
-        "LeftUpperLeg",
-        "RightUpperLeg",
-        "LeftLowerLeg",
-        "RightLowerLeg",
-        "LeftFoot",
-        "RightFoot"
-    }
-
-    local upperparts = {
-        "Head",
-        "HeadTopHitBox",
-        "FaceHitBox",
-        "UpperTorso",
-        "LowerTorso",
-        "LeftUpperArm",
-        "RightUpperArm",
-        "LeftLowerArm",
-        "RightLowerArm"
-    }
-
     local function chooseTpart(charact)
-        if aimpart == "Head" then
+        if #bparts == 0 then
             return charact:FindFirstChild("Head")
-            
-        elseif aimpart == "HeadTop" then
-            return charact:FindFirstChild("HeadTopHitBox")
-
-        elseif aimpart == "Face" then
-            return charact:FindFirstChild("FaceHitBox")
-
-        elseif aimpart == "Upper Body" then
-            return charact:FindFirstChild(upperparts[math.random(1, #upperparts)])
-
-        elseif aimpart == "Upper Torso" then
-            return charact:FindFirstChild("UpperTorso")
-        elseif aimpart == "Lower Torso" then
-            return charact:FindFirstChild("LowerTorso")
-
-        elseif aimpart == "Legs" then
-            return charact:FindFirstChild(legparts[math.random(1, #legparts)])
-
-        elseif aimpart == "Random" then
+        else
             return charact:FindFirstChild(bparts[math.random(1, #bparts)])
         end
     end
+
 
     if aimbots then --priority 2 (bots)
         for _, botfold in ipairs(workspace.AiZones:GetChildren()) do
@@ -5917,6 +5848,33 @@ runs.RenderStepped:Connect(function(delta) --  fast
         return
     end
 
+    if stopanims and fallanim and Desync then
+        local player = game:GetService("Players").LocalPlayer
+        if player and player.Character then
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                local animator = humanoid:FindFirstChildOfClass("Animator")
+                if animator then
+                    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+                        if track.Animation and track.Animation.AnimationId ~= "rbxassetid://10921278648" then
+                            track:Stop()
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if fallanim and Desync then
+        animTrackHH:Play()
+        wait(0.1)
+        animTrackHH:AdjustSpeed(0)
+    else
+        animTrackHH:Stop()
+        wait(0.1)
+        animTrackHH:AdjustSpeed(0)
+    end
+
     if charsemifly == false and localplayer.Character.Humanoid.PlatformStand == true then
         localplayer.Character.Humanoid.PlatformStand = false
     end
@@ -6006,7 +5964,7 @@ runs.RenderStepped:Connect(function(delta) --  fast
         disableNoclip(character)
     end
 
-    if charsemifly and localplayer.Character then --semifly
+    if charsemifly and localplayer.Character then
         local hrp = localplayer.Character:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
         local dir = Vector3.new(0, 0, 0)
@@ -6045,11 +6003,17 @@ runs.RenderStepped:Connect(function(delta) --  fast
 		end
     end
 
-    if changerbool and localplayer.Character ~= nil then -- humanoid changer
-        localplayer.Character.Humanoid.WalkSpeed = changerspeed
-        localplayer.Character.Humanoid.JumpHeight = changerjump
-        localplayer.Character.Humanoid.HipHeight = changerheight
-        workspace.Gravity = changergrav
+    local function changeprop(condition, property, value)
+        if condition and localplayer.Character and localplayer.Character:FindFirstChild("Humanoid") then
+            localplayer.Character.Humanoid[property] = value
+        end
+    end
+
+    changeprop(ModifyWalkspeed, "WalkSpeed", WalkspeedV)
+    changeprop(ModifyJump, "JumpHeight", JumpV)
+    changeprop(ModifyHip, "HipHeight", HipV)
+    if ModifyGrav then
+        game.Workspace.Gravity = GravV
     end
 
 if aimtarget ~= nil then
@@ -6122,7 +6086,7 @@ end
         aimsnapline.Visible = false
     end
 
-    for dobj, info in esptable do --esp part
+    for dobj, info in esptable do
         local dtype = info.type
         local otype = info.otype
         
