@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.6"
+local version = "v0.5"
 
 local detectedAdmins = {}
 
