@@ -19,6 +19,12 @@ local allowed_keys = {
     "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", -- 1269420797420638301 t
     "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS", -- 473962768643522580 t
     "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI", -- 480705478687457330 t
+	
+    "ElJmrDCjusXFfjQmrmVzXtoraQNbgrBl", -- valary.cc resell
+    "jayGHXvrYKQPYlttWzNkTQtxXOxbUShv", -- valary.cc resell
+    "ozzcVGpLKRjvTNkEgcyxjPtOpuGsYkJN", -- valary.cc resell
+    "AlukoadOqDcpzFrzOcISdfifOUNSJfeD", -- valary.cc resell
+	
     "YVxmhjlBANSfotPvlbGYtUamIRaaAWHX", -- 1122599312283676753 u
     "CDxOvoHgjzeaDMxiEzNFTHCppfsbFluY", -- 1174890399647666197 u
     "jkdfvELkKJzdkYAeMGGABxwNArWxmFCx" -- 824425308149121024 t
@@ -2192,7 +2198,7 @@ desync:AddSlider({
     suffix = "",
     dragging = true,
     focused = false,
-    min = -3,
+    min = -2.9,
     max = 3,
     increment = 0.1,
     callback = function(v)
