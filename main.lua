@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.6"
+local version = "v0.7"
 
 local detectedAdmins = {}
 
@@ -162,6 +162,7 @@ timeout = 0.3
 local Friendlist = {}
 FLM = "Blacklist"
 FLB = false
+SPN = nil
 
 local esptable = {}
 
@@ -492,6 +493,7 @@ local camzoom = other:AddSection("Zoom", 2)
 local camer = other:AddSection("Effects", 2)
 local hitsounds = other:AddSection("Hitsounds", 2)
 local extrafeatures = other:AddSection("Extra Features", 2)
+local relationsmanager = other:AddSection("Relation Manager", 2)
 
 --aim:SetText("Text")
 
@@ -2092,9 +2094,9 @@ desync:AddToggle({
     risky = false,
     noindicator = false,
     callback = function(v)
-        if _G.LoadingConfig == true then return end; if _G.Loading == true then return end
+    if _G.LoadingConfig == true then return end; if _G.Loading == true then return end
+	Desync = v
 
-        Desync = v
     end,
     keycallback = function(v)
 
@@ -2107,7 +2109,20 @@ desync:AddToggle({
     risky = true,
     tooltip = "Plays the falling animation when Desync is enabled.",
     callback = function(v)
-        fallanim = v; stopanims = v
+        fallanim = v
+        stopanims = v
+
+        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+
+        if humanoid then
+            if fallanim then
+                if not animTrackHH or not animTrackHH.Parent then
+                    local animation = Instance.new("Animation")
+                    animation.AnimationId = animationId
+                    animTrackHH = humanoid:LoadAnimation(animationxx)
+                end
+            end
+        end
     end
 })
 
@@ -3959,6 +3974,95 @@ cameraoffset:AddSlider({
     increment = 0.1,
     callback = function(v)
         camthirdpZ = v
+    end
+})
+
+relationsmanager:AddSeparator({
+    enabled = true,
+    text = "Username"
+})
+
+relationsmanager:AddBox({
+    enabled = true,
+    name = "PlayerUsernameInput",
+    flag = "RelationManagerBox",
+    input = "",
+    focused = false,
+    risky = false,
+    callback = function(v)
+        local inputName = v:lower()
+        local bestMatch = nil
+
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Name:lower():sub(1, #inputName) == inputName then
+                bestMatch = player.Name
+                break
+            end
+        end
+
+        if bestMatch then
+            SPN = bestMatch
+            library:SendNotification("Selected player: " .. bestMatch, 3)
+        else
+            library:SendNotification(v .. " does not exist or is not currently available.", 3)
+            SPN = nil
+        end
+    end
+})
+
+relationsmanager:AddSeparator({
+    enabled = true,
+    text = "Actions"
+})
+
+relationsmanager:AddButton({
+    enabled = true,
+    text = "Whitelist Player",
+    tooltip = "Adds selected player to the whitelist.",
+    confirm = false,
+    risky = false,
+    callback = function()
+        if not SPN then
+            library:SendNotification("No player selected.", 3)
+            return
+        end
+        
+        local playerExists = game.Players:FindFirstChild(SPN) or workspace.AiZones:FindFirstChild(SPN, true)
+        
+        if not playerExists then
+            library:SendNotification(SPN .. " does not exist or is not currently available.", 3)
+            return
+        end
+        
+        if not table.find(Friendlist, SPN) then
+            table.insert(Friendlist, SPN)
+            library:SendNotification(SPN .. " has been added to the whitelist.", 3)
+        else
+            library:SendNotification(SPN .. " is already whitelisted.", 3)
+        end
+    end
+})
+
+relationsmanager:AddButton({
+    enabled = true,
+    text = "Unwhitelist Player",
+    tooltip = "Removes selected player from the whitelist.",
+    confirm = false,
+    risky = false,
+    callback = function()
+        if not SPN then
+            library:SendNotification("No player selected.", 3)
+            return
+        end
+        
+        local iter = table.find(Friendlist, SPN)
+        
+        if iter then
+            table.remove(Friendlist, iter)
+            library:SendNotification(SPN .. " has been removed from the whitelist.", 3)
+        else
+            library:SendNotification(SPN .. " is not whitelisted.", 3)
+        end
     end
 })
 
