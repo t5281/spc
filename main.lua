@@ -1,5 +1,5 @@
 local exec = identifyexecutor()
-local version = "v0.7"
+local version = "v0.8"
 
 local detectedAdmins = {}
 
@@ -15,7 +15,7 @@ _G.Loading = true
 library:init()
 
 local allowed_keys = {
-    "A-2345634563245643456789",
+    "A9",
     "WVAnPrhZKZfDhrLzSqhMswGodsOiDHOY", -- 1269420797420638301 t
     "jgQEnMvXXuKyRCqyIxarUkFzucMwSJpS", -- 473962768643522580 t
     "vwwSTkrpIxaLnvtAYHKVwzPMtruNiUdI", -- 480705478687457330 t
@@ -88,12 +88,12 @@ if exec == "Seliware" or exec == "Nihon" then
     library:SendNotification((exec .. " is semi-supported, script might cause errors."), 3.5)
 end
 ]]
-if _G.exothiumxyz then
+if getgenv().SpecterVip then
     library:SendNotification(("Script is already loaded, therefore you cant execute it again"), 3.5)
     return
 end
 
-_G.exothiumxyz = true
+getgenv().SpecterVip = true
 
 local wcamera = workspace.CurrentCamera
 local Players = game:GetService("Players")
@@ -273,7 +273,122 @@ undergroundcharrotZ = 0
 Desync = false
 
 DesyncVisualize = false
-local visualPart
+
+desyncParts = {}
+
+local function createDesyncVisualizer(player)
+    local character = player.Character
+    if not character then return end
+
+    local oldVisualizer = character:FindFirstChild("DesyncVisualizer")
+    if oldVisualizer then
+        oldVisualizer:Destroy()
+		table.clear(desyncParts)
+    end
+
+    local desyncVisualizer = Instance.new("Model")
+    desyncVisualizer.Name = "DesyncVisualizer"
+    desyncVisualizer.Parent = character
+
+    local fakeRoot = Instance.new("Part")
+    fakeRoot.Name = "HumanoidRootPart"
+    fakeRoot.Size = Vector3.new(2, 2, 1)
+    fakeRoot.Transparency = 1
+    fakeRoot.Anchored = false
+    fakeRoot.CanCollide = false
+    fakeRoot.Material = Enum.Material.ForceField
+    fakeRoot.Color = Color3.fromRGB(255, 255, 255)
+    fakeRoot.Parent = desyncVisualizer
+
+    table.insert(desyncParts, fakeRoot)
+
+    desyncVisualizer.PrimaryPart = fakeRoot
+
+    for _, part in ipairs(character:GetChildren()) do
+        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" and part.Name ~= "FaceHitBox" and part.Name ~= "HeadTopHitBox" then
+            local clonedPart = part:Clone()
+            clonedPart.Archivable = true
+            clonedPart.Transparency = 1
+            clonedPart.Material = Enum.Material.ForceField
+            clonedPart.Color = Color3.fromRGB(255, 255, 255)
+            clonedPart.Anchored = false
+            clonedPart.CanCollide = false
+            clonedPart.Parent = desyncVisualizer
+            clonedPart.Archivable = false
+
+            table.insert(desyncParts, clonedPart)
+        end
+    end
+
+    local head = desyncVisualizer:FindFirstChild("Head")
+    if head then
+        local face = head:FindFirstChild("face")
+        if face then
+            face:Destroy()
+        end
+    end
+
+	function UpdateWelds()
+    local player = workspace:FindFirstChild(localplayer.Name)
+    while not player do
+        wait()
+        player = workspace:FindFirstChild(localplayer.Name)
+    end
+
+    while not player:FindFirstChild("DesyncVisualizer") do
+        wait()
+    end
+
+    local desyncVis = player.DesyncVisualizer
+
+    local UpperTorso = desyncVis.UpperTorso
+    local LowerTorso = desyncVis.LowerTorso
+    local HumanoidRootPart = desyncVis:FindFirstChild("HumanoidRootPart")
+
+    local RightUpperLeg = desyncVis.RightUpperLeg
+    local LeftUpperLeg = desyncVis.LeftUpperLeg
+    local RightLowerLeg = desyncVis.RightLowerLeg
+    local LeftLowerLeg = desyncVis.LeftLowerLeg
+    local RightFoot = desyncVis.RightFoot
+    local LeftFoot = desyncVis.LeftFoot
+    local RightUpperArm = desyncVis.RightUpperArm
+    local LeftUpperArm = desyncVis.LeftUpperArm
+    local RightLowerArm = desyncVis.RightLowerArm
+    local LeftLowerArm = desyncVis.LeftLowerArm
+    local RightHand = desyncVis.RightHand
+    local LeftHand = desyncVis.LeftHand
+    local Head = desyncVis.Head
+
+    UpperTorso.Waist.Part0 = LowerTorso
+    LowerTorso.Root.Part0 = HumanoidRootPart
+    RightUpperLeg.RightHip.Part0 = LowerTorso
+    LeftUpperLeg.LeftHip.Part0 = LowerTorso
+    RightLowerLeg.RightKnee.Part0 = RightUpperLeg
+    LeftLowerLeg.LeftKnee.Part0 = LeftUpperLeg
+    RightFoot.RightAnkle.Part0 = RightLowerLeg
+    LeftFoot.LeftAnkle.Part0 = LeftLowerLeg
+    RightUpperArm.RightShoulder.Part0 = UpperTorso
+    LeftUpperArm.LeftShoulder.Part0 = UpperTorso
+    RightLowerArm.RightElbow.Part0 = RightUpperArm
+    LeftLowerArm.LeftElbow.Part0 = LeftUpperArm
+    RightHand.RightWrist.Part0 = RightLowerArm
+    LeftHand.LeftWrist.Part0 = LeftLowerArm
+
+    for _, child in pairs(Head:GetChildren()) do
+        if child:IsA("WeldConstraint") then
+            child:Destroy()
+        end
+    end
+
+    Head.Neck.Part0 = UpperTorso
+end
+UpdateWelds()
+
+end
+
+createDesyncVisualizer(localplayer)
+
+desynchrp = desyncParts[1]
 
 DesyncX = 0
 DesyncY = 0
@@ -551,7 +666,7 @@ characterchams:AddToggle({
 
 local function applyChams()
     for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
+        if part:IsA("BasePart") and part.Parent.Name ~= "DesyncVisualizer" then
             if not storedProperties[part] then
                 storedProperties[part] = {
                     Material = part.Material,
@@ -560,12 +675,13 @@ local function applyChams()
             end
             part.Material = charchamsmaterial
             part.Color = charchamscolor
-        elseif part:IsA("SurfaceAppearance") then
+        elseif part:IsA("SurfaceAppearance") and part.Parent.Name ~= "DesyncVisualizer" then
             storedSurfaceAppearances[part] = part.Parent
             part.Parent = nil
         end
     end
 end
+
 
 local function removeChams()
     for part, properties in pairs(storedProperties) do
@@ -2126,18 +2242,6 @@ desync:AddToggle({
     end
 })
 
-local function createpart()
-    visualPart = Instance.new("Part")
-    visualPart.Size = Vector3.new(2, 2, 1)
-    visualPart.CanCollide = false
-    visualPart.Color = Color3.fromRGB(159, 99, 254)
-    visualPart.Anchored = true
-    visualPart.Transparency = 1
-    visualPart.Material = Enum.Material.ForceField
-    visualPart.Parent = workspace
-end
-createpart()
-
 desync:AddToggle({
     text = "Visualize Desync",
     tooltip = "Enables/disables Desync Visualizer",
@@ -2145,15 +2249,21 @@ desync:AddToggle({
     callback = function(v)
         DesyncVisualize = v
         if Desync then
-            visualPart.Transparency = v and 0 or 1
+            for _, part in ipairs(desyncParts) do
+    			part.Transparency = v and 0 or 1
+			end
         else
-            visualPart.Transparency = 1
+            for _, part in ipairs(desyncParts) do
+    			part.Transparency = 1
+			end
         end
 
         if _G.LoadingConfig and DesyncVisualize then
             task.spawn(function()
                 task.wait(0.2)
-                visualPart.Transparency = 0
+            		for _, part in ipairs(desyncParts) do
+    					part.Transparency = 0
+					end
             end)
         end
     end
@@ -2165,7 +2275,9 @@ desync:AddToggle({
     trans = 0,
     open = false,
     callback = function(v)
-        visualPart.Color = v
+        for _, part in ipairs(desyncParts) do
+    		part.Color = v
+		end
     end
 })
 
@@ -2180,7 +2292,9 @@ desync:AddList({
     values = {"ForceField", "Neon", "SmoothPlastic"},
     risky = false,
     callback = function(v)
-        visualPart.Material = Enum.Material[v]
+		for _, part in ipairs(desyncParts) do
+    		part.Material = Enum.Material[v]
+		end
     end
 })
 
@@ -2305,7 +2419,7 @@ desync:AddToggle({
     else
         coroutine.wrap(function()
             while xspinning do
-                DesyncX = (DesyncX + xspeedspin * 2) % 360
+                DesyncX = (RotDesyncX + xspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
         end)()
@@ -5927,7 +6041,7 @@ runs.Heartbeat:Connect(function(delta)
 
     	local newRotation = CFrame.Angles(math.rad(RotDesyncX), math.rad(RotDesyncY), math.rad(RotDesyncZ))
 
-    	visualPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
+		desynchrp.CFrame = CFrame.new(desyncedpos.Position) * newRotation
 
     	localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(desyncedpos.Position) * newRotation
 
@@ -5974,7 +6088,7 @@ runs.RenderStepped:Connect(function(delta) --  fast
         animTrackHH:AdjustSpeed(0)
     end
 
-    if charsemifly == false and localplayer.Character.Humanoid.PlatformStand == true then
+    if charsemifly == false and localplayer.Character.Humanoid.PlatformStand == true and localplayer.Character then
         localplayer.Character.Humanoid.PlatformStand = false
     end
 
