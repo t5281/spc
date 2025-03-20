@@ -1752,7 +1752,7 @@ privatefeatures:AddToggle({
     text = "Jumppower Modifier",
     flag = "JumppowerToggle",
     callback = function(v)
-        JumpV = v
+        ModifyJump = v
     end
 }):AddBind({
     enabled = true,
@@ -1765,7 +1765,7 @@ privatefeatures:AddToggle({
     risky = false,
     noindicator = false,
     callback = function(v)
-        ModifyJump = v
+        JumpV = v
     end,
     keycallback = function(v)
 
