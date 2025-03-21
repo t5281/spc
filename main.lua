@@ -1939,7 +1939,8 @@ privatefeatures:AddToggle({
 
 local humanoid = character:WaitForChild("Humanoid")
 local animationxx = Instance.new("Animation")
-animationxx.AnimationId = "rbxassetid://10921278648" -- 10921159222
+local animationidxx = "rbxassetid://10921159222" -- 10921278648
+animationxx.AnimationId = "rbxassetid://10921159222" -- 10921278648
 local animTrackHH = humanoid:LoadAnimation(animationxx)
 animTrackHH.TimePosition = testpos
 
@@ -2233,8 +2234,6 @@ desync:AddToggle({
         if humanoid then
             if fallanim then
                 if not animTrackHH or not animTrackHH.Parent then
-                    local animation = Instance.new("Animation")
-                    animation.AnimationId = animationId
                     animTrackHH = humanoid:LoadAnimation(animationxx)
                 end
             end
@@ -2415,11 +2414,11 @@ desync:AddToggle({
     callback = function(v)
             xspinning = v
     if not xspinning then
-        DesyncX = 0
+        RotDesyncX = 0
     else
         coroutine.wrap(function()
             while xspinning do
-                DesyncX = (RotDesyncX + xspeedspin * 2) % 360
+                RotDesyncX = (RotDesyncX + xspeedspin * 2) % 360
                 runs.RenderStepped:Wait()
             end
         end)()
@@ -6069,7 +6068,7 @@ runs.RenderStepped:Connect(function(delta) --  fast
                 local animator = humanoid:FindFirstChildOfClass("Animator")
                 if animator then
                     for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-                        if track.Animation and track.Animation.AnimationId ~= "rbxassetid://10921278648" then
+                        if track.Animation and track.Animation.AnimationId ~= animationidxx then
                             track:Stop()
                         end
                     end
