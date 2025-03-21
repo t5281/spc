@@ -4776,13 +4776,13 @@ task.spawn(function()
 
     Players.PlayerAdded:Connect(function(player)
         if joinlogs then
-            library:SendNotification((player.Name .." has joined the server"), logduration)
+            library:SendNotification((player.Name .." has joined the server"), logduration, Color3.new(0,1,0))
         end
     end)
 
     Players.PlayerRemoving:Connect(function(player)
         if leavelogs then
-            library:SendNotification((player.Name .." has left the server"), logduration)
+            library:SendNotification((player.Name .." has left the server"), logduration, Color3.new(1,0,0))
         end
     end)
 
