@@ -114,7 +114,7 @@ local embed = {
 }
 
     game.Players.LocalPlayer:Kick("Tampering detected.")
-    
+    while true do end
 end
 
 getgenv().s3wxd4ec5vf6bgt7hn = getgenv().s3wxd4ec5vf6bgt7hn + 2
